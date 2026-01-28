@@ -1,0 +1,177 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // users/{uid}
+    match /users/{uid} {
+      allow read: if isSelf(uid);
+      allow create: if isSelf(uid) && request.resource.data.role in ['COACH', 'TRAINEE'];
+      // keep role immutable
+      allow update: if isSelf(uid) && request.resource.data.role == resource.data.role;
+      allow delete: if false;
+    }
+
+    // coachDirectory/{displayNameLower}
+    match /coachDirectory/{key} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && request.resource.data.coachId == request.auth.uid;
+      allow delete: if false;
+    }
+
+    // coachIdDirectory/{coachId} (reverse index: ID -> Name)
+    match /coachIdDirectory/{coachId} {
+      // trainees need this to show coach names in dropdown
+      allow read: if signedIn();
+      // only the coach themself can write their own entry
+      allow create, update: if isSelf(coachId) && request.resource.data.coachId == request.auth.uid;
+      allow delete: if false;
+    }
+
+    // coaches/{coachId}/plans/{planId}
+    match /coaches/{coachId} {
+      allow read: if signedIn();
+
+      match /plans/{planId} {
+        // only COACH can write their own plans
+        allow create, update, delete: if isSelf(coachId)
+          && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'COACH';
+
+        // coach can read, or trainees who joined this coach can read
+        allow read: if isSelf(coachId)
+          || (signedIn() && get(/databases/$(database)/documents/trainees/$(request.auth.uid)/memberships/$(coachId)).data.coachId == coachId);
+      }
+
+      // coach-managed trainee directory
+      match /trainees/{traineeId} {
+        allow read: if isSelf(coachId);
+        allow create, update, delete: if isSelf(coachId)
+          && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'COACH';
+      }
+
+      match /trainees/{traineeId}/completions/{completionId} {
+        // trainee can write their own completion
+        allow create: if signedIn() && request.auth.uid == traineeId;
+
+        // coach (and must be COACH) can read
+        allow read: if isSelf(coachId)
+          && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'COACH';
+
+        allow update, delete: if false;
+      }
+    }
+
+    // trainees/{traineeId}/...
+    match /trainees/{traineeId} {
+      allow read: if isSelf(traineeId);
+
+      match /memberships/{coachId} {
+        allow create, update, delete, read: if isSelf(traineeId);
+      }
+
+      // coach pushes plans to trainee inbox
+      match /inboxPlans/{planId} {
+        // trainee can read their own inbox
+        allow read: if isSelf(traineeId);
+
+        // coach can create/update/delete only if this trainee joined the coach
+        allow create, update, delete: if signedIn()
+          && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'COACH'
+          && get(/databases/$(database)/documents/trainees/$(traineeId)/memberships/$(request.auth.uid)).data.coachId == request.auth.uid
+          && request.resource.data.coachId == request.auth.uid
+          && request.resource.data.traineeId == traineeId;
+      }
+    }
+
+    // === 現有的日誌規則 (保持不變) ===
+    // Food, Activity, and Training Logs - User-specific data
+    match /food_logs/{docId} {
+      allow read, write, delete: if signedIn() && request.auth.uid == resource.data.userId;
+      allow create: if signedIn() && request.auth.uid == request.resource.data.userId;
+    }
+    
+    match /activity_logs/{docId} {
+      allow read, write, delete: if signedIn() && request.auth.uid == resource.data.userId;
+      allow create: if signedIn() && request.auth.uid == request.resource.data.userId;
+    }
+
+    match /training_records/{docId} {
+      allow read, write, delete: if signedIn() && request.auth.uid == resource.data.userId;
+      allow create: if signedIn() && request.auth.uid == request.resource.data.userId;
+    }
+
+    // === 新增的 Firebase 整合模組 Security Rules ===
+
+    // 用戶資料 - user_profiles/{uid}
+    match /user_profiles/{uid} {
+      allow read, create, update: if isSelf(uid);
+      allow delete: if false;
+    }
+
+    // 跑步記錄 - running_records/{recordId}
+    match /running_records/{recordId} {
+      allow read, write, delete: if signedIn() && request.auth.uid == resource.data.userId;
+      allow create: if signedIn() && request.auth.uid == request.resource.data.userId;
+    }
+
+    // InBody 體態數據 - inbody_records/{recordId}
+    match /inbody_records/{recordId} {
+      allow read, write, delete: if signedIn() && request.auth.uid == resource.data.userId;
+      allow create: if signedIn() && request.auth.uid == request.resource.data.userId;
+    }
+
+    // 體態相簿元數據 - body_photos/{photoId}
+    match /body_photos/{photoId} {
+      allow read, write, delete: if signedIn() && request.auth.uid == resource.data.userId;
+      allow create: if signedIn() && request.auth.uid == request.resource.data.userId;
+    }
+
+    // 數據分析 - training_analysis/{analysisId}
+    match /training_analysis/{analysisId} {
+      allow read, write, delete: if signedIn() && request.auth.uid == resource.data.userId;
+      allow create: if signedIn() && request.auth.uid == request.resource.data.userId;
+    }
+
+    // 部位分析 - part_analysis/{analysisId}
+    match /part_analysis/{analysisId} {
+      allow read, write, delete: if signedIn() && request.auth.uid == resource.data.userId;
+      allow create: if signedIn() && request.auth.uid == request.resource.data.userId;
+    }
+
+    // 訓練計劃 - training_plans/{planId}
+    match /training_plans/{planId} {
+      allow read, write, delete: if signedIn() && request.auth.uid == resource.data.userId;
+      allow create: if signedIn() && request.auth.uid == request.resource.data.userId;
+    }
+
+    // 聊天歷史 - chat_history/{userId}
+    match /chat_history/{userId} {
+      allow read, write, delete: if isSelf(userId);
+      allow create: if isSelf(userId);
+    }
+
+    // 教練選擇 - coach_plan_selections/{userId}
+    match /coach_plan_selections/{userId} {
+      allow read, write, delete: if isSelf(userId);
+      allow create: if isSelf(userId);
+    }
+
+    // 教練顯示名稱 - coach_display_names/{userId}
+    match /coach_display_names/{userId} {
+      allow read, write, delete: if isSelf(userId);
+      allow create: if isSelf(userId);
+    }
+
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

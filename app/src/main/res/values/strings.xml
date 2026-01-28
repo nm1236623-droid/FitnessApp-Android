@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">fitness</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="login_continue">Login to continue</string>
+</resources>

@@ -1,0 +1,52 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // 體態相簿圖片 - body_photos/{userId}/{fileName}
+    match /body_photos/{userId}/{fileName} {
+      allow read: if isSelf(userId);
+      allow write: if isSelf(userId);
+      allow delete: if isSelf(userId);
+    }
+
+    // 用戶頭像 - user_avatars/{userId}/{fileName}
+    match /user_avatars/{userId}/{fileName} {
+      allow read: if signedIn(); // 允許其他用戶查看頭像
+      allow write: if isSelf(userId);
+      allow delete: if isSelf(userId);
+    }
+
+    // 食物圖片 - food_images/{userId}/{fileName}
+    match /food_images/{userId}/{fileName} {
+      allow read: if isSelf(userId);
+      allow write: if isSelf(userId);
+      allow delete: if isSelf(userId);
+    }
+
+    // 訓練相關圖片 - training_images/{userId}/{fileName}
+    match /training_images/{userId}/{fileName} {
+      allow read: if isSelf(userId);
+      allow write: if isSelf(userId);
+      allow delete: if isSelf(userId);
+    }
+
+    // 臨時上傳文件 - temp_uploads/{userId}/{fileName}
+    match /temp_uploads/{userId}/{fileName} {
+      allow read, write, delete: if isSelf(userId);
+    }
+
+    // 預設圖片資源 - defaults/{fileName}
+    match /defaults/{fileName} {
+      allow read: if signedIn(); // 所有登入用戶可讀取預設圖片
+      allow write, delete: if false; // 不允許寫入或刪除預設圖片
+    }
+  }
+}

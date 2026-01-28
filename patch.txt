@@ -1,0 +1,23 @@
+--- a/app/src/main/java/com/example/fitness/ui/HomeScreen.kt
++++ b/app/src/main/java/com/example/fitness/ui/HomeScreen.kt
+@@ -593,6 +593,20 @@
+                                     text = {
+                                         Column {
+                                             OutlinedTextField(
++                                                value = nicknameInput,
++                                                onValueChange = { nicknameInput = it },
++                                                label = { Text("暱稱", color = Color.White.copy(alpha = 0.7f)) },
++                                                colors = OutlinedTextFieldDefaults.colors(
++                                                    focusedTextColor = Color.White,
++                                                    unfocusedTextColor = Color.White,
++                                                    focusedBorderColor = TechColors.NeonBlue,
++                                                    unfocusedBorderColor = TechColors.NeonBlue.copy(alpha = 0.5f),
++                                                    focusedLabelColor = TechColors.NeonBlue,
++                                                    unfocusedLabelColor = Color.White.copy(alpha = 0.7f)
++                                                )
++                                            )
++                                            Spacer(modifier = Modifier.height(8.dp))
++                                            OutlinedTextField(
+                                                 value = weightInput,
+                                                 onValueChange = { weightInput = it.filter { ch -> ch.isDigit() || ch == '.' } },
+                                                 label = { Text("體重 (kg)", color = Color.White.copy(alpha = 0.7f)) },

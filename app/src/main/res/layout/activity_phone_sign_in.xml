@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="手機號碼登入"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+    <EditText
+        android:id="@+id/etPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="輸入手機號碼 (e.g. +886912345678)"
+        android:inputType="phone"
+        android:minHeight="48dp"/>
+
+    <Button
+        android:id="@+id/btnSendCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="發送驗證碼"
+        android:layout_marginTop="16dp"/>
+
+    <ProgressBar
+        android:id="@+id/progressBarPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginTop="16dp"/>
+
+    <LinearLayout
+        android:id="@+id/layoutVerification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginTop="32dp">
+
+        <EditText
+            android:id="@+id/etVerificationCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="輸入 6 位數驗證碼"
+            android:inputType="number"
+            android:maxLength="6"
+            android:minHeight="48dp"/>
+
+        <Button
+            android:id="@+id/btnVerify"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="驗證並登入"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
+
+</LinearLayout>
