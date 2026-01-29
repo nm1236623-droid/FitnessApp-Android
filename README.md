@@ -54,7 +54,7 @@
 * **版本控制 (Version Control)**: Git & GitHub
 
 ## 📬 聯絡作者 (Contact)
-* **Developer**: Yu-Cheng (陳佑軒)
+* **Developer**: Sid (陳佑軒)
 * **Email**: 513210271@m365.fju.edu.tw
 * **Role**: 輔仁大學軟體工程學系 | 皇輝科技 網管工程師
 
