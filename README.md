@@ -35,7 +35,7 @@
 
 | 登入畫面 | 主頁面 | AI 建議 | 訓練紀錄 |
 |:---:|:---:|:---:|:---:|
-| <img src="https://github.com/user-attachments/assets/d021bb88-4b15-448e-88a9-38e41746dc3b" width="220"/> | <img src="https://github.com/user-attachments/assets/a560622a-4ac6-4a0f-b7a7-5bbd276336b0" width="220"/> | <img src="https://github.com/user-attachments/assets/24868d1e-c921-4635-8267-1147cf63efcd" width="220"/> | <img src="https://github.com/user-attachments/assets/877bc061-dafb-4969-a7a4-31bf2236173a" width="220"/> |
+| <img src="https://github.com/user-attachments/assets/d021bb88-4b15-448e-88a9-38e41746dc3b" width="220"/> | <img src="https://github.com/user-attachments/assets/a560622a-4ac6-4a0f-b7a7-5bbd276336b0" width="220"/> | <img src="https://github.com/user-attachments/assets/24868d1e-c921-4635-8267-1147cf63efcd" width="220"/> | <img src="https://github.com/user-attachments/assets/877bc061-dafb-4969-a7a4-31bf2236173a](https://github.com/user-attachments/assets/ea3f1fc2-f31d-4d08-beaa-0cca89184d0a" width="220"/> 
 
 ---
 
