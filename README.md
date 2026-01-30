@@ -41,7 +41,7 @@
 
 ## 🛠️ 技術堆疊 (Tech Stack)
 
-* **語言 (Languages)**: Java (主要), Kotlin
+* **語言 (Languages)**: Kotlin
 * **開發工具 (IDE)**: Android Studio Ladybug
 * **架構 (Architecture)**: MVVM / Object-Oriented Design (OOD)
 * **後端服務 (Backend)**: Google Firebase (Auth, Firestore, Storage)
